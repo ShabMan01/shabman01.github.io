@@ -1,0 +1,222 @@
+
+
+<!doctype html>
+<html>
+
+<head>
+    <title>Blox Fruits Level - CoolCalcs</title>
+    <link rel="stylesheet" type="text/css" href="./style.css">
+    <link rel="icon" type="image/x-icon" href="./logo.ico">
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=default'></script>
+
+    <style>
+        .cont-io {
+            display: inline-grid;
+            grid-template-rows: 1fr 1fr 1fr 1fr;
+            grid-template-columns: 1fr 1fr;
+            row-gap: 1rem;
+            column-gap: 2rem;
+        }
+
+        .cont-io input {
+            color: #0099ff;
+
+            border: 0.1rem solid #015f9e;
+            border-radius: 5rem;
+
+            padding: 1rem;
+
+            font-family: 'Courier New', Courier, monospace;
+
+            font-size: 1.5em;
+            text-align: center;
+        }
+        .cont-io input::placeholder {
+            color: #015f9e;
+        }
+        input:focus {
+            outline-color: #ffe45e;
+        }
+
+        .cont-io button {
+            background-color: rgb(255,255,255);
+            color: #015f9e;
+
+            width: fit-content;
+            
+            border: 0.25rem solid #015f9e;
+            border-radius: 5rem;
+
+            margin-top: 1rem;
+
+            padding: 1rem;
+            padding-left: 3rem;
+            padding-right: 3rem;
+
+            font-family: Coco;
+            font-size: 1.25em;
+
+            justify-self: center;
+            align-self: center;
+
+            grid-column: 1/span 2;
+            grid-row: 8;
+
+            transition: 0.3s;
+        }
+        .cont-io button:hover {
+            background-color: #015f9e;
+            color: #ffe45e;
+
+            transform: scale(1.05);
+        }
+
+        .highlight {
+            font-family: 'Courier New', Courier, monospace;
+        }
+    </style>
+    
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="<%= baseURL %>/">Cool<span style="color: #ffe45e">Calcs</span></a></div>
+        <div class="nav-links">
+            <a href="<%= baseURL %>/#about">About</a>
+            <a href="<%= baseURL %>/#calculators">Calculators</a>
+        </div>
+    </nav>
+
+
+
+    <div class="site">
+        <div class="textbox">
+            <h1>Blox Fruits (Roblox) - Level</h1>
+            <hr>
+            <p>According to <a class="link" href="https://blox-fruits.fandom.com/wiki/Levels#:~:text=The%20amount%20of%20exp%20needed%20per%20level%20is%20defined%20by">Blox Fruit's fan-made wiki</a>, the amount of XP required per level can be found through the following equation: $$\lceil 2 \cdot level^{2.3} + 84 \rceil$$</p>
+            <p>Therefore, we can do the following:</p>
+        </div>
+
+
+        <div class="textbox">
+            <div class="cont-io">
+                <p>From Level:</p>
+                <p>To Level:</p>
+                <input type="number" id="from" placeholder="xxxxx (min: 1)" min="1" oninput="this.value = Math.round(this.value);">
+                <input type="number" id="to" placeholder="xxxxx (max: 2550+)" min="1" oninput="this.value = Math.round(this.value);">
+
+                <hr style="grid-column: 1/span 2; margin-top: 1rem;">
+
+                <p>XP per Quest:</p>
+                <p>Money per Quest:</p>
+                <input type="number" id="qXP" placeholder="xxxxx xp" oninput="this.value = Math.round(this.value);">
+                <input type="number" id="qM" placeholder="$xxxxx" oninput="this.value = Math.round(this.value);">
+                
+                <p style="grid-row: 6; grid-column: 1; margin-top: 4rem;">Time per Quest:</p>
+                <input style="margin-top: 3rem;" type="number" id="qT" placeholder="xxxxx sec" oninput="this.value = Math.round(this.value);">
+
+
+
+
+
+
+
+
+                <hr style="grid-column: 1/span 2; margin-top: 1rem;">
+
+                <button class="button" onclick="calculate()">CALCULATE</button>
+                
+                <hr style="grid-column: 1/span 2; margin-top: 2rem;">
+
+
+
+
+
+
+
+            
+                <p>XP at level <span id="fromXP" class="highlight">FROM</span> :</p>
+                <p>XP at level <span id="toXP" class="highlight">TO</span> :</p>
+                <span class="highlight" id="fromXPcalc"> NULL </span>
+                <span class="highlight" id="toXPcalc"> NULL </span>
+
+                <hr style="grid-column: 1/span 2; margin-top: 2rem;">
+
+                <p style="grid-column: 1/span 2;">Total XP from level <span id="fromTot" class="highlight">FROM</span> to level <span id="toTot" class="highlight">TO</span> :</p>
+
+                <span style="grid-column: 1/span 2; margin-bottom: 1rem;" class="highlight" id="totalXPcalc">NULL</span>
+                
+                <hr style="grid-column: 1/span 2; margin-top: 1rem;">
+
+
+                <p>Num Quests Needed:</p>
+                <p>Total Money Earned:</p>
+                <span class="highlight" id="res_qNum"> NULL </span>
+                <span class="highlight" id="res_qMon"> NULL </span>
+
+                <hr style="grid-column: 1/span 2; margin-top: 2rem;">
+
+                <p>Total Time Taken <span class="highlight">(min)</span>:</p>
+                <p>Total Time Taken <span class="highlight">(hr)</span>:</p>
+                <span class="highlight" id="res_qTmin"> NULL </span>
+                <span class="highlight" id="res_qThr"> NULL </span>
+
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function calculate() {
+            // text repalce
+            const fromLevel = document.getElementById('from').value;
+            const toLevel = document.getElementById('to').value;
+            
+            document.getElementById('fromXP').textContent = fromLevel;
+            document.getElementById('toXP').textContent = toLevel;
+            document.getElementById('fromTot').textContent = fromLevel;
+            document.getElementById('toTot').textContent = toLevel;
+
+
+            // xp calculations
+            const f = parseInt(fromLevel); const t = parseInt(toLevel);
+            let fromXPcalc = Math.ceil(2*f**2.3 + 84);
+            let toXPcalc = Math.ceil(2*t**2.3 + 84);
+
+            let totalXPcalc = 0;
+            for (let i = f; i < t+1; i++){
+                totalXPcalc += Math.ceil(2*i**2.3 + 84);
+            }
+
+            document.getElementById('fromXPcalc').textContent = fromXPcalc.toLocaleString() + " XP";
+            document.getElementById('toXPcalc').textContent = toXPcalc.toLocaleString() + " XP";
+            document.getElementById('totalXPcalc').textContent = totalXPcalc.toLocaleString() + " XP";
+
+
+            // quest calculations
+            const qXP = parseInt(document.getElementById('qXP').value);
+            const qM = parseInt(document.getElementById('qM').value); 
+            const qT = parseInt(document.getElementById('qT').value);
+
+            let numQuests = Math.ceil(totalXPcalc/qXP);
+            let moneyEarned = qM*numQuests;
+            let totalTime_min = (qT*numQuests)/60;
+            let totalTime_hr = (totalTime_min/60).toLocaleString();
+
+            document.getElementById('res_qNum').textContent = numQuests.toLocaleString() + " Quests";
+            document.getElementById('res_qMon').textContent = "$" + moneyEarned.toLocaleString();
+            document.getElementById('res_qTmin').textContent = totalTime_min.toLocaleString() + " min";
+            document.getElementById('res_qThr').textContent = totalTime_hr + " hr";
+
+        }
+
+    </script>
+
+    
+
+
+
+
+</body>
+
+</html>

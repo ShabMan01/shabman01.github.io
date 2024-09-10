@@ -1,4 +1,4 @@
-// // Disc: main server
+// Disc: main server
 
 // --------------- INITIALIZATION --------------- //
 
@@ -20,26 +20,8 @@ app.get('/', (req, res) => {
 });
 
 
-
-// --------------- proj: CoolCalcs --------------- //
-
-const coolcalcsApp = express();
-coolcalcsApp.set('view engine', 'ejs');
-coolcalcsApp.set('views', path.join(__dirname, 'projects', 'CoolCalcs', 'views'));
-coolcalcsApp.use(express.static(path.join(__dirname, 'projects', 'CoolCalcs', 'static')));
-coolcalcsApp.use(express.json());
-coolcalcsApp.use(express.urlencoded({ extended: true }));
-
-require('./projects/CoolCalcs/index')(coolcalcsApp);
-
-app.use('/projects/coolcalcs', coolcalcsApp);
-
-
-
-// --------------- MAIN --------------- //
-
 app.get('*', (req, res) => {
-  res.render('error');
+  res.redirect('/');
 });
 
 
